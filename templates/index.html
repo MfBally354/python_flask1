@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Flask To-Do List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 My To-Do List</h1>
+            <p class="subtitle">Kelola tugas harianmu dengan mudah</p>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Form tambah task -->
+        <div class="add-task-form">
+            <form action="{{ url_for('add_todo') }}" method="POST">
+                <input 
+                    type="text" 
+                    name="task" 
+                    placeholder="Tambahkan task baru..." 
+                    class="task-input"
+                    autofocus
+                >
+                <button type="submit" class="btn btn-primary">
+                    ➕ Tambah
+                </button>
+            </form>
+        </div>
+
+        <!-- Statistik -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ todos|length }}</span>
+                <span class="stat-label">Total Task</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ todos|selectattr('completed', 'equalto', true)|list|length }}</span>
+                <span class="stat-label">Selesai</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ todos|selectattr('completed', 'equalto', false)|list|length }}</span>
+                <span class="stat-label">Belum Selesai</span>
+            </div>
+        </div>
+
+        <!-- Daftar tasks -->
+        <div class="todos-container">
+            {% if todos %}
+                <div class="todos-header">
+                    <h2>Daftar Task</h2>
+                    <a href="{{ url_for('clear_all') }}" class="btn btn-danger btn-sm" 
+                       onclick="return confirm('Yakin ingin menghapus semua task?')">
+                        🗑️ Hapus Semua
+                    </a>
+                </div>
+
+                <ul class="todos-list">
+                    {% for todo in todos %}
+                        <li class="todo-item {% if todo.completed %}completed{% endif %}">
+                            <div class="todo-content">
+                                <input 
+                                    type="checkbox" 
+                                    {% if todo.completed %}checked{% endif %}
+                                    onclick="window.location.href='{{ url_for('complete_todo', todo_id=todo.id) }}'"
+                                    class="todo-checkbox"
+                                >
+                                <div class="todo-text">
+                                    <span class="task-name">{{ todo.task }}</span>
+                                    <span class="task-time">{{ todo.created_at }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ url_for('delete_todo', todo_id=todo.id) }}" 
+                               class="btn-delete"
+                               onclick="return confirm('Yakin ingin menghapus task ini?')">
+                                ❌
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>Belum ada task</h3>
+                    <p>Tambahkan task pertamamu di atas!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <footer>
+            <p>Dibuat dengan ❤️ menggunakan Flask</p>
+        </footer>
+    </div>
+</body>
+</html>
