@@ -406,7 +406,7 @@ in the Software without restriction...
 **Iqbal**
 
 - GitHub: [@iqbal](https://github.com/iqbal)
-- Email: iqbal@example.com
+- Email: iqbalguntur313@gmail.com
 
 ## 🙏 Acknowledgments
 
